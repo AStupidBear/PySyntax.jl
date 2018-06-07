@@ -29,7 +29,7 @@ function traverse!(expr::Expr)
     # df.loc => df["loc"]
     if expr.head == :(.)
         expr.head = :(ref)
-        ex.args[2] = string(ex.args[2].value)
+        expr.args[2] = string(expr.args[2].value)
     end
 
     return expr
