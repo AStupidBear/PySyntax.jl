@@ -26,10 +26,9 @@ function traverse!(expr::Expr)
         traverse!(expr.args[i])
     end
 
-    # df.loc => df["loc"]
+    # df.loc => df[:loc]
     if expr.head == :(.)
         expr.head = :(ref)
-        expr.args[2] = string(expr.args[2].value)
     end
 
     return expr
@@ -43,5 +42,8 @@ end
 macro py(expr::Symbol)
     return esc(expr)
 end
+
+Base.getindex(x::PyObject, idxs...) = pycall(x[:__getitem__], PyObject, tuple(idxs...))
+Base.setindex!(x::PyObject, value, idxs...) = pycall(x[:__setitem__], PyObject, tuple(idxs...), value)
 
 end # module
