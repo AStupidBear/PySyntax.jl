@@ -19,12 +19,6 @@ function traverse!(expr::Expr)
         unshift!(expr.args, :(pybuiltin("slice")))
     end
 
-    # df["name"] => get(df, :name)
-    if expr.head == :(ref)
-        expr.head = :(call)
-        unshift!(expr.args, :(get))
-    end
-
     for (i, arg) in enumerate(expr.args)
         if arg  == :(:)
             expr.args[i] = :(pybuiltin("slice")(nothing, nothing, nothing))
@@ -32,9 +26,10 @@ function traverse!(expr::Expr)
         traverse!(expr.args[i])
     end
 
-    # df.loc => df[:loc]
+    # df.loc => df["loc"]
     if expr.head == :(.)
         expr.head = :(ref)
+        ex.args[2] = string(ex.args[2].value)
     end
 
     return expr
