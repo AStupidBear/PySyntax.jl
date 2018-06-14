@@ -36,11 +36,11 @@ end
 
 macro py(expr::Expr)
     traverse!(expr)
-    return expr
+    return esc(expr)
 end
 
 macro py(expr::Symbol)
-    return expr
+    return esc(expr)
 end
 
 Base.getindex(x::PyObject, idxs...) = pycall(x[:__getitem__], PyObject, tuple(idxs...))
